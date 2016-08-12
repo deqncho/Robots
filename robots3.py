@@ -4,6 +4,10 @@ import random
 import os
 import pygame
 
+
+#newComment
+
+
 class Player():
     def __init__(self,x,y):
         self.x = x
@@ -366,7 +370,6 @@ for track in music:
 for path in paths:
     audio = AudioSegment.from_mp3(path)
     soundsToMerge.append(audio)
-
 
 
 trackToPlay=reduce( (lambda x,y:x+y), soundsToMerge)
