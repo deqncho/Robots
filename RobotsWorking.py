@@ -4,7 +4,7 @@ import random
 import os
 import pygame
 
-
+#TODO: Implement walls (this will be a hard one)
 # newComment
 
 
