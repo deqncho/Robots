@@ -275,6 +275,8 @@ def game():
     robots = place_robots(numbots)
     junk = []
 
+    # TODO: Modulise code into functions
+    
     player = safely_place_player(robots, junk)
     while not finished:
          robotsThatSeePlayer = []
