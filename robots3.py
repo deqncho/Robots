@@ -290,6 +290,22 @@ def game():
 
          robotsThatSeePlayer = [rob for index,rob in enumerate(robots) if index not in robotsThatDontSeePlayer]
          player, teleportsInfo, teleportsLeft = move_player(robots,junk,player,teleportsLeft,teleportsInfo)
+         robotsThatSeePlayer = []
+         robotsThatDontSeePlayer = []
+         for index_robot ,evil_robot in enumerate(robots):
+             for trash in junk:
+                 if ((player.x < trash.x < evil_robot.x and (player.y == trash.y == evil_robot.y)) or
+                         ((evil_robot.x<trash.x<player.x) and (player.y == trash.y == evil_robot.y)) or
+                    ((player.y < trash.y < evil_robot.y) and (player.x == trash.x == evil_robot.x)) or
+                         ((evil_robot.y<trash.y<player.y)and(player.x == trash.x == evil_robot.x))):
+                    robotsThatDontSeePlayer.append(index_robot)
+
+
+
+
+
+
+         robotsThatSeePlayer = [rob for index,rob in enumerate(robots) if index not in robotsThatDontSeePlayer]
          move_robots(robotsThatSeePlayer, player)
 
          crashedOnMove = []
