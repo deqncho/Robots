@@ -4,9 +4,7 @@ import random
 import os
 import pygame
 
-
-# newComment
-
+#TODO: implement walls
 
 class Player():
     def __init__(self, x, y):
@@ -67,11 +65,6 @@ class VerticalWall(Wall):
         else:
             return False
 
-
-class Junk:
-    pass
-
-
 def collided(thing1, list_of_things):
     for thing2 in list_of_things:
         if thing1.x == thing2.x and thing1.y == thing2.y:
@@ -85,6 +78,7 @@ def place_player():
 
 
 def checkWhoSeesPlayer(robots, player, junk):
+    #TODO: implement walls
     robotsThatSeePlayer = []
     robotsThatDontSeePlayer = []
     for index_robot, evil_robot in enumerate(robots):
@@ -128,7 +122,7 @@ def move_player(robots, junk, player, teleportsLeft, teleportsInfo):
     while key == '5':
 
         if teleportsLeft > 0:
-            teleportsLeft = teleportsLeft - 1
+            teleportsLeft -= 1
             remove_from_screen(teleportsInfo)
             teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
             remove_from_screen(player.shape)
@@ -136,7 +130,15 @@ def move_player(robots, junk, player, teleportsLeft, teleportsInfo):
         key = update_when("key_pressed")
 
     if key == '6':
-        player.x = (player.x + 1) % 72
+        if player.x == 71:
+            if teleportsLeft:
+                player.x = 0
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+        else:
+            player.x += 1
+
     elif key == '3':
 
         if player.x != 71 and player.y != 0:
@@ -144,83 +146,160 @@ def move_player(robots, junk, player, teleportsLeft, teleportsInfo):
             player.x = player.x + 1
             player.y = player.y - 1
         elif player.x == 71 and player.y == 0:
-            player.x = 0
-            player.y = 47
-        elif player.x == 71 and player.y != 0:
-            player.x = 71 - 47 + player.y
-            player.y = 47
-        elif player.x != 71 and player.y == 0:
-            if player.x - 47 <= 0:
-                player.y = player.x
+            if teleportsLeft:
                 player.x = 0
-            else:
                 player.y = 47
-                player.x = player.x - 47
+                teleportsLeft -=1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+        elif player.x == 71 and player.y != 0:
+            if teleportsLeft:
+                player.x = 71 - 47 + player.y
+                player.y = 47
+                teleportsLeft -=1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+        elif player.x != 71 and player.y == 0:
+            if teleportsLeft:
+                if player.x - 47 <= 0:
+                    player.y = player.x
+                    player.x = 0
+                else:
+                    player.y = 47
+                    player.x = player.x - 47
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
 
     elif key == '1':
         if player.x == 0 and player.y == 47:
-            pass
-        elif player.x == 0 and player.y == 0:
-            player.x = 71
-            player.y = 47
+            if teleportsLeft:
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+
         elif player.x != 0 and player.y != 0:
             player.x = player.x - 1
             player.y = player.y - 1
-        elif player.x == 0 and player.y != 0:
-            player.x = 47 - player.y
-            player.y = 47
-        elif player.x != 71 and player.y == 0:
-            if player.x <= 71 - 47:
-                player.y = 47
-                player.x = player.x + 47
-            else:
-                player.y = 71 - player.x
+        elif player.x == 0 and player.y == 0:
+            if teleportsLeft:
                 player.x = 71
+                player.y = 47
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+
+        elif player.x == 0 and player.y != 0:
+            if teleportsLeft:
+                player.x = 47 - player.y
+                player.y = 47
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+        elif player.x != 71 and player.y == 0:
+            if teleportsLeft:
+                if player.x <= 71 - 47:
+                    player.y = 47
+                    player.x = player.x + 47
+                else:
+                    player.y = 71 - player.x
+                    player.x = 71
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
 
 
     elif key == '2':
-        player.y = (player.y - 1) % 48
+        if player.y == 0:
+            if teleportsLeft:
+                player.y = 47
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+        else:
+            player.y -= 1
+
     elif key == '4':
-        player.x = (player.x - 1) % 72
+        if player.x == 0:
+            if teleportsLeft:
+                player.x = 71
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+        else:
+            player.x -= 1
+
     elif key == '7':
         if player.x != 0 and player.y != 47:
             player.x = player.x - 1
             player.y = player.y + 1
         elif player.x == 0 and player.y == 47:
-            player.x = 71
-            player.y = 0
-        elif player.y != 47 and player.x == 0:
-            player.x = player.y
-            player.y = 0
-        elif player.y == 47 and player.x != 0:
-            if player.x <= 71 - 47:
-                player.x = player.x + 47
-                player.y = 0
-            else:
-                player.y = -71 + player.x + 47
+            if teleportsLeft:
                 player.x = 71
+                player.y = 0
+                teleportsLeft -=1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+        elif player.y != 47 and player.x == 0:
+            if teleportsLeft:
+                player.x = player.y
+                player.y = 0
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+        elif player.y == 47 and player.x != 0:
+            if teleportsLeft:
+                if player.x <= 71 - 47:
+                    player.x = player.x + 47
+                    player.y = 0
+                else:
+                    player.y = -71 + player.x + 47
+                    player.x = 71
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
 
     elif key == '8':
-        player.y = (player.y + 1) % 48
+        if player.y == 47:
+            if teleportsLeft:
+                player.y = 0
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+        else:
+            player.y += 1
+
     elif key == '9':
         if player.x == 71 and player.y == 0:
             pass
         elif player.x == 71 and player.y == 47:
-            player.x = 0
-            player.y = 0
+            if teleportsLeft:
+                player.x = 0
+                player.y = 0
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
         elif player.y != 47 and player.x != 71:
             player.x += 1
             player.y += 1
         elif player.x == 71 and player.y != 47:
-            player.x = 71 - player.y
-            player.y = 0
-        elif player.x != 71 and player.y == 47:
-            if player.x >= 47:
+            if teleportsLeft:
+                player.x = 71 - player.y
                 player.y = 0
-                player.x = player.x - 47
-            else:
-                player.y = 47 - player.x
-                player.x = 0
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
+        elif player.x != 71 and player.y == 47:
+            if teleportsLeft:
+                if player.x >= 47:
+                    player.y = 0
+                    player.x = player.x - 47
+                else:
+                    player.y = 47 - player.x
+                    player.x = 0
+                teleportsLeft -= 1
+                remove_from_screen(teleportsInfo)
+                teleportsInfo = Text("Teleports:" + str(teleportsLeft), (10, 450), size=15)
 
     if key != '5':
         move_to(player.shape, (10 * player.x + 5, 10 * player.y + 5))
@@ -254,7 +333,6 @@ def move_robots(robots, player):
 
         move_to(rob.shape, (10 * rob.x, 10 * rob.y))
 
-
 def checkCollisions():
     global player, robots, junk
     return collided(player, robots)
@@ -271,12 +349,12 @@ def robot_crashed(the_bot, robots):
 timesDied = 0
 
 def game():
-    key = None
+
     finished = False
     stayInMenu = True
     global timesDied
     while stayInMenu:
-        Text("Times died:" + str(timesDied), (600, 430), size=15)
+        Text("Times died:" + str(timesDied), (550, 430), size=15)
         Text("Choose difficulty (use numpad):", (35, 430), size=20)
         Text("1. Easy", (35, 400), size=20)
         Text("2. Medium", (35, 370), size=20)
@@ -297,16 +375,16 @@ def game():
             teleportsLeft = 1000
         if key == '2':
             stayInMenu = False
-            numbots = 50
+            numbots = 100
             teleportsLeft = 20
         if key == '3':
             stayInMenu = False
-            numbots = 100
-            teleportsLeft = 5
+            numbots = 250
+            teleportsLeft = 10
         if key == '4':
             stayInMenu = False
             numbots = 600
-            teleportsLeft = 3
+            teleportsLeft = 5
         if key == '5':
             clear_screen()
             Text("Use numpad to move horizontally, vertically and diagonally.", (35, 310), size=15)
@@ -462,5 +540,5 @@ pygame.mixer.init()
 pygame.mixer.music.load('./audio/mergedTrack.mp3')
 pygame.mixer.music.play(-1)
 
-begin_graphics(720, 480)
+begin_graphics(width=720,height= 480, title='Evil Robots')
 game()

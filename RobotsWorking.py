@@ -7,13 +7,11 @@ import pygame
 #TODO: Implement walls (this will be a hard one)
 # newComment
 
-
 class Player():
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.shape = None
-
 
 class Robot:
     def __init__(self, x, y):
@@ -26,7 +24,6 @@ class Wall():
 
 class HorizontalWall(Wall):
     def __init__(self, start_x, end_x, pos_y):
-
         self.start_x = start_x
         self.end_x = end_x
         self.pos_y = pos_y
@@ -44,7 +41,6 @@ class HorizontalWall(Wall):
             return True
         else:
             return False
-
 
 class VerticalWall(Wall):
     def __init__(self, start_y, end_y, pos_x):
@@ -67,17 +63,11 @@ class VerticalWall(Wall):
         else:
             return False
 
-
-class Junk:
-    pass
-
-
 def collided(thing1, list_of_things):
     for thing2 in list_of_things:
         if thing1.x == thing2.x and thing1.y == thing2.y:
             return True
     return False
-
 
 def place_player():
     player = Player(random_between(0, 71), random_between(0, 47))
@@ -85,6 +75,16 @@ def place_player():
 
 
 def checkWhoSeesPlayer(robots, player, junk):
+    """
+    Basic function that returns who sees the player.
+    Only works for walls of 1 junk.
+    To be implemented with walls consisting of more than 1 junk.
+
+    :param robots:
+    :param player:
+    :param junk:
+    :return:
+    """
     robotsThatSeePlayer = []
     robotsThatDontSeePlayer = []
     for index_robot, evil_robot in enumerate(robots):
@@ -98,7 +98,6 @@ def checkWhoSeesPlayer(robots, player, junk):
     robotsThatSeePlayer = [rob for index, rob in enumerate(robots) if index not in robotsThatDontSeePlayer]
     return robotsThatSeePlayer
 
-
 def place_robots(limitBots):
     robots = []
     while len(robots) < limitBots:
@@ -110,10 +109,8 @@ def place_robots(limitBots):
             robots.append(evilBot)
     return robots
 
-
 def safely_place_player(robots, junk):
     player = place_player()
-
     while collided(player, robots + junk):
         del player
         player = place_player()
@@ -437,30 +434,32 @@ def game():
 
     game()
 
+if __name__ == '__main__':
 
-if os.path.isfile('./mergedTrack.mp3'):
-    os.remove('./mergedTrack.mp3')
+    if os.path.isfile('./mergedTrack.mp3'):
+        os.remove('./mergedTrack.mp3')
 
-music = ['./audio/track7.mp3', './audio/track8.mp3', './audio/track9.mp3', './audio/track10.mp3',
-         './audio/track11.mp3', './audio/track12.mp3', './audio/track13.mp3', './audio/track14.mp3',
-         './audio/track15.mp3', './audio/track16.mp3']
-random.shuffle(music)
-paths = []
-soundsToMerge = []
+    music = ['./audio/track7.mp3', './audio/track8.mp3', './audio/track9.mp3', './audio/track10.mp3',
+             './audio/track11.mp3', './audio/track12.mp3', './audio/track13.mp3', './audio/track14.mp3',
+             './audio/track15.mp3', './audio/track16.mp3']
 
-for track in music:
-    paths.append(os.path.abspath(track))
+    random.shuffle(music)
+    paths = []
+    soundsToMerge = []
 
-for path in paths:
-    audio = AudioSegment.from_mp3(path)
-    soundsToMerge.append(audio)
+    for track in music:
+        paths.append(os.path.abspath(track))
 
-trackToPlay = reduce((lambda x, y: x + y), soundsToMerge)
-trackToPlay.export("./audio/mergedTrack.mp3", format="mp3")
+    for path in paths:
+        audio = AudioSegment.from_mp3(path)
+        soundsToMerge.append(audio)
 
-pygame.mixer.init()
-pygame.mixer.music.load('./audio/mergedTrack.mp3')
-pygame.mixer.music.play(-1)
+    trackToPlay = reduce((lambda x, y: x + y), soundsToMerge)
+    trackToPlay.export("./audio/mergedTrack.mp3", format="mp3")
 
-begin_graphics(720, 480)
-game()
+    pygame.mixer.init()
+    pygame.mixer.music.load('./audio/mergedTrack.mp3')
+    pygame.mixer.music.play(-1)
+
+    begin_graphics(720, 480)
+    game()
